@@ -92,8 +92,10 @@ void get_ghost(struct Ghost *g) {
           &g->movement->direction,
           &g->defense_mode
     );
+
     if (g->defense_mode == 0)
         scanf("%d ", &g->remaining_defense_time);
+
     scanf("(%d,%d) (%d,%d)\n",
           &g->movement->initial_x,
           &g->movement->initial_y,
