@@ -12,8 +12,8 @@ struct Man {
 
 struct Ghost {
     int x, y;
-    int defenseMode;
-    int remainingDefenseTime;
+    int defense_mode;
+    int remaining_defense_time;
     int direction;
 };
 
