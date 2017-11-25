@@ -12,7 +12,7 @@ struct Man {
 
 struct Ghost {
     int x, y;
-    int state;
+    int defenseMode;
     int remainingDefenseTime;
     int direction;
 };
