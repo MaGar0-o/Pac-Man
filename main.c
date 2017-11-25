@@ -193,6 +193,7 @@ void print_current_location(struct Game *g) {
 }
 
 void print_current_score(struct Game *g) {
+    printf("%d\n", g->score);
     return;
 }
 
