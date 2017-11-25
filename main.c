@@ -105,7 +105,82 @@ void get_ghost(struct Ghost *g) {
     return;
 }
 
+bool same_place(struct Movement *m1, struct Movement *m2) {
+    return m1->current_x == m2->current_x &&
+           m1->current_y == m2->current_y;
+}
+
+bool can_eat(struct Man *pacman, struct Ghost *ghost) {
+    return ghost->defense_mode == 0 &&
+           same_place(pacman->movement, ghost->movement);
+}
+
+bool can_eat(struct Ghost *ghost, struct Man *pacman) {
+    return ghost->defense_mode == 1 &&
+           same_place(pacman->movement, ghost->movement);
+}
+
+void make_ghosts_defensive(struct Game *game) {
+    game->blinky->defense_mode = game->clyde->defense_mode = game->pinky->defense_mode = game->inky->defense_mode = 0;
+    return;
+}
+
 void move_forward(struct Game *game) {
+    struct Man *pacman = game->pacman;
+    struct Movement *mvmnt = pacman->movement;
+    struct Map *map = game->map;
+    int n = map->n;
+    int m = map->m;
+
+    int new_x = mvmnt->current_x + dx[mvmnt->direction];
+    new_x = (new_x % n + n) % n;
+    int new_y = mvmnt->current_y + dy[mvmnt->direction];
+    new_y = (new_y % m + m) % m;
+
+    if (map->cells[new_x][new_y] == '#')
+        return;
+
+    mvmnt->current_x = new_x;
+    mvmnt->current_y = new_y;
+
+    switch (map->cells[new_x][new_y]) {
+        case '*':
+            game->score++;
+            break;
+        case '^':
+            game->score += 20;
+            break;
+        case 'O':
+            make_ghosts_defensive(game);
+            break;
+    }
+    map->cells[new_x][new_y] = '_';
+
+    //can pacman eat ghosts?
+    if (can_eat(pacman, game->blinky))
+        game->score += 50;
+    if (can_eat(pacman, game->pinky))
+        game->score += 50;
+    if (can_eat(pacman, game->clyde))
+        game->score += 50;
+    if (can_eat(pacman, game->inky))
+        game->score += 50;
+
+    //can ghosts eat pacman?
+    bool pacman_died = false;
+    if (can_eat(game->blinky, pacman))
+        pacman_died = true;
+    if (can_eat(game->pinky, pacman))
+        pacman_died = true;
+    if (can_eat(game->clyde, pacman))
+        pacman_died = true;
+    if (can_eat(game->inky, pacman))
+        pacman_died = true;
+    if (pacman_died) {
+        pacman->health--;
+        mvmnt->current_x = mvmnt->initial_x;
+        mvmnt->current_y = mvmnt->initial_y;
+    }
     return;
 }
 
