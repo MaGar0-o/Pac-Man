@@ -67,7 +67,7 @@ Map *init_map(void) {
 
 Game *init_game(void) {
     struct Game *game = (struct Game *) malloc(sizeof(struct Game));
-    Game->score = 0;
+    game->score = 0;
     game->pacman = init_man();
     game->blinky = init_ghost();
     game->pinky = init_ghost();
