@@ -91,6 +91,22 @@ void get_ghost(struct Ghost *g) {
     return;
 }
 
+void move_forward(struct Game *game) {
+    return;
+}
+
+void print_current_location(struct Game *g) {
+    return;
+}
+
+void print_current_score(struct Game *g) {
+    return;
+}
+
+void print_winning_state(struct Game *g) {
+    return;
+}
+
 int main() {
     struct Game *game = init_game();
 
@@ -123,7 +139,11 @@ int main() {
     struct Ghost *inky = game->inky;
     get_ghost(inky);
 
+    move_forward(game);
 
+    print_current_location(game);
+    print_current_score(game);
+    print_winning_state(game);
 
     return 0;
 }
