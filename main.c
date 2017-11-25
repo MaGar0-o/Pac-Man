@@ -88,6 +88,18 @@ struct Game *init_game(void) {
 }
 
 void get_ghost(struct Ghost *g) {
+    scanf("%*s %d %d ",
+          &g->movement->direction,
+          &g->defense_mode
+    );
+    if (g->defense_mode == 0)
+        scanf("%d ", &g->remaining_defense_time);
+    scanf("(%d,%d) (%d,%d)\n",
+          &g->movement->initial_x,
+          &g->movement->initial_y,
+          &g->movement->current_x,
+          &g->movement->current_y
+    );
     return;
 }
 
@@ -125,7 +137,8 @@ int main() {
           &pacman->movement->initial_x,
           &pacman->movement->initial_y,
           &pacman->movement->current_x,
-          &pacman->movement->current_y);
+          &pacman->movement->current_y
+    );
 
     struct Ghost *blinky = game->blinky;
     get_ghost(blinky);
