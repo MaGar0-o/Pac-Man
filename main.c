@@ -4,6 +4,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
+
+int dx[5] = {0, -1, 0, +1, 0};
+int dy[5] = {0, 0, +1, 0, -1};
 
 struct Movement {
     int current_x, current_y;
@@ -96,7 +100,7 @@ void get_ghost(struct Ghost *g) {
     if (g->defense_mode == 0)
         scanf("%d ", &g->remaining_defense_time);
 
-    scanf("(%d,%d) (%d,%d)\n",
+    scanf("(%d,%d) (%d,%d)",
           &g->movement->initial_x,
           &g->movement->initial_y,
           &g->movement->current_x,
@@ -110,12 +114,12 @@ bool same_place(struct Movement *m1, struct Movement *m2) {
            m1->current_y == m2->current_y;
 }
 
-bool can_eat(struct Man *pacman, struct Ghost *ghost) {
+bool man_can_eat(struct Man *pacman, struct Ghost *ghost) {
     return ghost->defense_mode == 0 &&
            same_place(pacman->movement, ghost->movement);
 }
 
-bool can_eat(struct Ghost *ghost, struct Man *pacman) {
+bool ghost_can_eat(struct Ghost *ghost, struct Man *pacman) {
     return ghost->defense_mode == 1 &&
            same_place(pacman->movement, ghost->movement);
 }
@@ -157,24 +161,24 @@ void move_forward(struct Game *game) {
     map->cells[new_x][new_y] = '_';
 
     //can pacman eat ghosts?
-    if (can_eat(pacman, game->blinky))
+    if (man_can_eat(pacman, game->blinky))
         game->score += 50;
-    if (can_eat(pacman, game->pinky))
+    if (man_can_eat(pacman, game->pinky))
         game->score += 50;
-    if (can_eat(pacman, game->clyde))
+    if (man_can_eat(pacman, game->clyde))
         game->score += 50;
-    if (can_eat(pacman, game->inky))
+    if (man_can_eat(pacman, game->inky))
         game->score += 50;
 
     //can ghosts eat pacman?
     bool pacman_died = false;
-    if (can_eat(game->blinky, pacman))
+    if (ghost_can_eat(game->blinky, pacman))
         pacman_died = true;
-    if (can_eat(game->pinky, pacman))
+    if (ghost_can_eat(game->pinky, pacman))
         pacman_died = true;
-    if (can_eat(game->clyde, pacman))
+    if (ghost_can_eat(game->clyde, pacman))
         pacman_died = true;
-    if (can_eat(game->inky, pacman))
+    if (ghost_can_eat(game->inky, pacman))
         pacman_died = true;
     if (pacman_died) {
         pacman->health--;
