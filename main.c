@@ -55,15 +55,22 @@ Man *init_man(void) {
 }
 
 Ghost *init_ghost(void) {
-
-}
-
-Time *init_time(void) {
-
+    struct Ghost *ghost = (struct Ghost *) malloc(sizeof(struct Ghost));
+    ghost->movement = init_movement();
+    ghost->defense_mode = 0;
+    ghost->remaining_defense_time = 0;
+    return ghost;
 }
 
 Map *init_map(void) {
+    struct Map *map = (struct Map *) malloc(sizeof(struct Map));
+    return map;
+}
 
+Time *init_time(void) {
+    struct Time *time = (struct Time *) malloc(sizeof(struct Time));
+    time->minutes = time->seconds = 0;
+    return time;
 }
 
 Game *init_game(void) {
