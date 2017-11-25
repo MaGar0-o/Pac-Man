@@ -41,11 +41,16 @@ struct Game {
 };
 
 Movement *init_movement(void) {
-
+    struct Movement *movement = (struct Movement *) malloc(sizeof(struct Movement));
+    movement->x = movement->y = movement->direction = 0;
+    return movement;
 }
 
 Man *init_man(void) {
-
+    struct Man *man = (struct Man *) malloc(sizeof(struct Man));
+    man->movement = init_movement();
+    man->health = 0;
+    return man;
 }
 
 Ghost *init_ghost(void) {
@@ -61,7 +66,8 @@ Map *init_map(void) {
 }
 
 Game *init_game(void) {
-    Game *game = (Game *) malloc(sizeof(Game));
+    struct Game *game = (struct Game *) malloc(sizeof(struct Game));
+    Game->score = 0;
     game->pacman = init_man();
     game->blinky = init_ghost();
     game->pinky = init_ghost();
