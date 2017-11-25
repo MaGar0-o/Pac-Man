@@ -37,9 +37,42 @@ struct Game {
     Ghost *clyde;
     Ghost *inky;
     Map *map;
+    Time *game_time;
 };
 
-int main() {
+Movement *init_movement(void) {
 
+}
+
+Man *init_man(void) {
+
+}
+
+Ghost *init_ghost(void) {
+
+}
+
+Time *init_time(void) {
+
+}
+
+Map *init_map(void) {
+
+}
+
+Game *init_game(void) {
+    Game *game = (Game *) malloc(sizeof(Game));
+    game->pacman = init_man();
+    game->blinky = init_ghost();
+    game->pinky = init_ghost();
+    game->clyde = init_ghost();
+    game->inky = init_ghost();
+    game->map = init_map();
+    game->game_time = init_time();
+    return game;
+}
+
+int main() {
+    Game *game = init_game();
     return 0;
 }
