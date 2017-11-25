@@ -6,7 +6,8 @@
 #include <stdlib.h>
 
 struct Movement {
-    int x, y;
+    int current_x, current_y;
+    int initial_x, initial_y;
     int direction;
 };
 
@@ -43,7 +44,7 @@ struct Game {
 
 Movement *init_movement(void) {
     struct Movement *movement = (struct Movement *) malloc(sizeof(struct Movement));
-    movement->x = movement->y = movement->direction = 0;
+    movement->current_x = movement->y = movement->initial_x = movement->initial_y = movement->direction = 0;
     return movement;
 }
 
@@ -88,5 +89,6 @@ Game *init_game(void) {
 
 int main() {
     Game *game = init_game();
+
     return 0;
 }
