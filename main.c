@@ -198,6 +198,13 @@ void print_current_score(struct Game *g) {
 }
 
 void print_winning_state(struct Game *g) {
+    bool state = true;
+    struct Map *map = g->map;
+    for (int i = 0; i < map->n; i++)
+        for (int j = 0; j < map->m; j++)
+            if (map->cells[i][j] == '*' || map->cells[i][j] == 'O')
+                state = false;
+    printf(state ? "Yes\n" : "No\n");
     return;
 }
 
