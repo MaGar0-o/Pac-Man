@@ -4,17 +4,20 @@
 
 #include <stdio.h>
 
-struct Man {
+struct Movement {
     int x, y;
     int direction;
+};
+
+struct Man {
+    Movement *movement;
     int health;
 };
 
 struct Ghost {
-    int x, y;
+    Movement *movement;
     int defense_mode;
     int remaining_defense_time;
-    int direction;
 };
 
 struct Map {
