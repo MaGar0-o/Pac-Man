@@ -185,6 +185,10 @@ void move_forward(struct Game *game) {
 }
 
 void print_current_location(struct Game *g) {
+    printf("(%d,%d)\n",
+           g->pacman->movement->current_x,
+           g->pacman->movement->current_y
+    );
     return;
 }
 
