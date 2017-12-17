@@ -10,8 +10,8 @@ void get_ghost(FILE *input, Ghost *ghost) {
     if (ghost->blue)
         fscanf(input, "%d ", &tmp1);
     ghost->blueCounterDown = (unsigned long long int) tmp1;
+    ghost->speed = 1;
     fscanf(input, "(%d,%d) (%lf,%lf)", &ghost->startY, &ghost->startX, &ghost->y, &ghost->x);
-    //printf("%d %d %d %d", ghost->startX, ghost->startY, (int)ghost->x, (int)ghost->y);
 }
 
 void initiateGame(char *filename, Map *outMap, Game *outGame, Pacman *outPacman, Ghost *outGhosts) {
@@ -20,7 +20,6 @@ void initiateGame(char *filename, Map *outMap, Game *outGame, Pacman *outPacman,
     fscanf(input, "%d %d\n", &outMap->height, &outMap->width);
     outGame->cheeses = outGame->cherries = outGame->pineapples = 0;
     outGame->ghosts = 4;
-    printf("%d %d\n", outMap->height, outMap->width);
 
     for (int i = 0; i < outMap->height; i++)
         for (int j = 0; j < outMap->width; j++) {
@@ -58,8 +57,49 @@ void initiateGame(char *filename, Map *outMap, Game *outGame, Pacman *outPacman,
     outGhosts[3].type = INKY;
 }
 
+bool is_near_cell(double x, double y, int i, int j) {
+    double dx = x - i,
+            dy = y - j;
+    double dis2 = dx * dx + dy * dy;
+    return dis2 <= .25;
+}
+
+void checkSingleEatable(Map *map, Game *outGame, Pacman *outPacman, Ghost *outGhosts, int i, int j) {
+    if (i < 0)
+        i += map->width;
+    if (i >= map->width)
+        i -= map->width;
+    if (j < 0)
+        j += map->height;
+    if (j >= map->height)
+        j -= map->height;
+    if (map->cells[i][j] == CELL_BLOCK)
+        return;
+    switch (map->cells[i][j]) {
+        case CELL_PINEAPPLE:
+            outGame->score += PINEAPPLE_SCORE;
+            for (int p = 0; p < 4; p++) {
+                outGhosts[p].blue = true;
+                outGhosts[p].blueCounterDown = BLUE_DURATION;
+            }
+            break;
+        case CELL_CHERRY:
+            outGame->score += CHERRY_SCORE;
+            break;
+        case CELL_CHEESE:
+            outGame->score += CHEESE_SCORE;
+            break;
+        default:
+            break;
+    }
+    map->cells[i][j] = CELL_EMPTY;
+}
+
 void checkEatables(Map *map, Game *outGame, Pacman *outPacman, Ghost *outGhosts) {
-    // fill me
+    for (int i = -1; i <= 1; i++)
+        for (int j = -1; j <= 1; j++)
+            if (is_near_cell(outPacman->x, outPacman->y, (int) outPacman->x + i, (int) outPacman->y + j))
+                checkSingleEatable(map, outGame, outPacman, outGhosts, (int)outPacman->x + i, (int)outPacman->y + j);
 }
 
 void checkGhostCollision(Pacman *outPacman, Ghost *outGhost) {
@@ -69,6 +109,7 @@ void checkGhostCollision(Pacman *outPacman, Ghost *outGhost) {
     if (dis2 > .25)
         return;
     if (outGhost->blue) {
+        outGhost->speed /= 2.;
         outGhost->blue = false;
         outGhost->x = outGhost->startX;
         outGhost->y = outGhost->startY;
