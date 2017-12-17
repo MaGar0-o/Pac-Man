@@ -46,6 +46,7 @@ void initiateGame(char *filename, Map *outMap, Game *outGame, Pacman *outPacman,
     int tmp;
     fscanf(input, "pacman: %lf %d (%d,%d) (%lf,%lf)\n", &outPacman->speed, &tmp, &outPacman->startX, &outPacman->startY,
            &outPacman->x, &outPacman->y);
+    outPacman->health = 3;
     printf("%d %d %d %d\n", outPacman->startX, outPacman->startY, (int) outPacman->x, (int) outPacman->y);
     outPacman->dir = (Direction) tmp;
 
@@ -62,7 +63,20 @@ void checkEatables(Map *map, Game *outGame, Pacman *outPacman, Ghost *outGhosts)
 }
 
 void checkGhostCollision(Pacman *outPacman, Ghost *outGhost) {
-    // fill me
+    double dx = outPacman->x - outGhost->x,
+            dy = outPacman->y - outGhost->y;
+    double dis2 = dx * dx + dy * dy;
+    if (dis2 > .25)
+        return;
+    if (outGhost->blue) {
+        outGhost->blue = false;
+        outGhost->x = outGhost->startX;
+        outGhost->y = outGhost->startY;
+    } else {
+        outPacman->x = outPacman->startX;
+        outPacman->y = outPacman->startY;
+        outPacman->health--;
+    }
 }
 
 bool isGameFinished(Game *game, Pacman *pacman) {
