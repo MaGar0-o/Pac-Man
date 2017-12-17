@@ -78,6 +78,7 @@ void checkSingleEatable(Map *map, Game *outGame, Pacman *outPacman, Ghost *outGh
     switch (map->cells[i][j]) {
         case CELL_PINEAPPLE:
             outGame->score += PINEAPPLE_SCORE;
+            outGame->pineapples--;
             for (int p = 0; p < 4; p++) {
                 outGhosts[p].blue = true;
                 outGhosts[p].blueCounterDown = BLUE_DURATION;
@@ -85,9 +86,11 @@ void checkSingleEatable(Map *map, Game *outGame, Pacman *outPacman, Ghost *outGh
             break;
         case CELL_CHERRY:
             outGame->score += CHERRY_SCORE;
+            outGame->cherries--;
             break;
         case CELL_CHEESE:
             outGame->score += CHEESE_SCORE;
+            outGame->cheeses--;
             break;
         default:
             break;
