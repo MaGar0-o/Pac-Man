@@ -1,0 +1,12 @@
+cmake_minimum_required(VERSION 3.7.2)
+project(96109855)
+
+set(CMAKE_C_STANDARD 99)
+set(SOURCE src/physics.c src/game.c)
+add_executable(96109855 ${SOURCE})
+include_directories(src)
+add_library(lib STATIC IMPORTED)
+set_target_properties(lib PROPERTIES IMPORTED_LOCATION "../liblib.a")
+target_link_libraries(96109855 lib)
+target_link_libraries(96109855 m SDL2 SDL2_gfx)
+add_definitions(-D_REENTRANT)
