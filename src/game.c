@@ -6,10 +6,8 @@ void get_ghost(FILE *input, Ghost *ghost) {
     int tmp1, tmp2;
     fscanf(input, "%*s %d %d ", &tmp1, &tmp2);
     ghost->dir = (Direction) tmp1;
-    //printf("%d %d\n", tmp1, tmp2);
-    //fscanf(input, "%d", tmp1);
-    ghost->blue = (bool) tmp2;
-    if (!tmp2)
+    ghost->blue = (bool) !tmp2;
+    if (ghost->blue)
         fscanf(input, "%d ", &tmp1);
     ghost->blueCounterDown = (unsigned long long int) tmp1;
     fscanf(input, "(%d,%d) (%lf,%lf)", &ghost->startY, &ghost->startX, &ghost->y, &ghost->x);
@@ -73,5 +71,9 @@ bool isGameFinished(Game *game, Pacman *pacman) {
 }
 
 void checkGhostState(Ghost *ghost) {
-    // fill me
+    if (!ghost->blue)
+        return;
+    ghost->blueCounterDown--;
+    if (ghost->blueCounterDown == 0)
+        ghost->blue = false;
 }
