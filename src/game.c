@@ -1,6 +1,7 @@
 #include "game.h"
 #include "map.h"
 #include <stdio.h>
+#include "physics.h"
 
 void get_ghost(FILE *input, Ghost *ghost) {
     int tmp1, tmp2;
@@ -10,7 +11,7 @@ void get_ghost(FILE *input, Ghost *ghost) {
     if (ghost->blue)
         fscanf(input, "%d ", &tmp1);
     ghost->blueCounterDown = (unsigned long long int) tmp1;
-    ghost->speed = 1;
+    ghost->speed = GHOST_DEFAULT_SPEED;
     fscanf(input, "(%d,%d) (%lf,%lf)", &ghost->startY, &ghost->startX, &ghost->y, &ghost->x);
 }
 
