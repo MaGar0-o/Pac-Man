@@ -120,6 +120,7 @@ void checkGhostCollision(Pacman *outPacman, Ghost *outGhost) {
     } else {
         outPacman->x = outPacman->startX;
         outPacman->y = outPacman->startY;
+        outPacman->speed = PACMAN_DEFAULT_SPEED;
         outPacman->health--;
     }
 }
