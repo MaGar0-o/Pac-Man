@@ -1,8 +1,5 @@
 #include "physics.h"
-#include "map.h"
-#include "game.h"
 #include <stdlib.h>
-#include <stdio.h>
 
 double getNewX(const Map *map, double pos, Direction dir) {
     int w = map->width;

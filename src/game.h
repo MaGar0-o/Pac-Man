@@ -4,14 +4,17 @@
 #include <stdbool.h>
 #include "map.h"
 
-typedef enum { 
+typedef enum {
     DIR_UP = 1,
     DIR_RIGHT = 2,
     DIR_DOWN = 3,
     DIR_LEFT = 4,
-    DIR_NONE = -1 } Direction;
+    DIR_NONE = -1
+} Direction;
 
-typedef enum { BLINKY, PINKY, CLYDE, INKY } GhostType;
+typedef enum {
+    BLINKY, PINKY, CLYDE, INKY
+} GhostType;
 
 #define MAX_GHOST_COUNT 4
 
@@ -47,17 +50,18 @@ typedef struct {
 } Ghost;
 
 // TO WRITE
-void initiateGame(char* filename, Map* outMap, Game* outGame, Pacman* outPacman, Ghost* outGhosts);
+void initiateGame(char *filename, Map *outMap, Game *outGame, Pacman *outPacman, Ghost *outGhosts);
 
 // TO WRITE
-void checkEatables(Map* map, Game* outGame, Pacman* outPacman, Ghost* outGhosts);
+void checkEatables(Map *map, Game *outGame, Pacman *outPacman, Ghost *outGhosts);
 
 // TO WRITE
-void checkGhostCollision(Pacman* outPacman, Ghost* outGhost);
+void checkGhostCollision(Pacman *outPacman, Ghost *outGhost);
 
 // TO WRITE
-bool isGameFinished(Game* game, Pacman* pacman);
+bool isGameFinished(Game *game, Pacman *pacman);
 
 // TO WRITE
-void checkGhostState(Ghost* ghost);
+void checkGhostState(Ghost *ghost);
+
 #endif

@@ -1,5 +1,4 @@
 #include "game.h"
-#include "map.h"
 #include <stdio.h>
 #include "physics.h"
 
@@ -103,7 +102,7 @@ void checkEatables(Map *map, Game *outGame, Pacman *outPacman, Ghost *outGhosts)
     for (int i = -1; i <= 1; i++)
         for (int j = -1; j <= 1; j++)
             if (is_near_cell(outPacman->x, outPacman->y, (int) outPacman->x + i, (int) outPacman->y + j))
-                checkSingleEatable(map, outGame, outPacman, outGhosts, (int)outPacman->x + i, (int)outPacman->y + j);
+                checkSingleEatable(map, outGame, outPacman, outGhosts, (int) outPacman->x + i, (int) outPacman->y + j);
 }
 
 void checkGhostCollision(Pacman *outPacman, Ghost *outGhost) {
