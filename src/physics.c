@@ -21,7 +21,7 @@ double getNewY(const Map *map, double pos, Direction dir) {
         return pos - 1 >= 0 ? pos - 1 : pos - 1 + h;
 }
 
-Direction decideGhost(const Map *map, Ghost *ghost) {
+Direction decideGhost(const Map *map, Ghost *ghost, Pacman *pacman, Ghost *blinky) {
     int sz = 1;
     Direction allowedDirs[5];
     allowedDirs[0] = DIR_NONE;
