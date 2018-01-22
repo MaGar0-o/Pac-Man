@@ -1,5 +1,6 @@
 #include "physics.h"
 #include <stdlib.h>
+#include <zconf.h>
 
 double getNewX(const Map *map, double pos, Direction dir) {
     int w = map->width;
@@ -21,7 +22,7 @@ double getNewY(const Map *map, double pos, Direction dir) {
         return pos - 1 >= 0 ? pos - 1 : pos - 1 + h;
 }
 
-void bfs(Map *map, int init_x, int init_y, int **dis) {
+void bfs(const Map *map, int init_x, int init_y, int dis[MAP_MAX_SIZE][MAP_MAX_SIZE]) {
     for (int i = 0; i < map->height; i++)
         for (int j = 0; j < map->width; j++)
             dis[j][i] = -1;
@@ -42,13 +43,14 @@ void bfs(Map *map, int init_x, int init_y, int **dis) {
         for (int dir = 1; dir <= 4; dir++) {
             nx = (int) getNewX(map, x, (Direction) dir);
             ny = (int) getNewY(map, y, (Direction) dir);
-            if (dis[nx][ny] == -1)
-                dis[nx][ny] = dis[x][y] + 1;
             if (map->cells[nx][ny] == CELL_BLOCK)
                 continue;
-            xqueue[queue_size] = nx;
-            yqueue[queue_size] = ny;
-            queue_size++;
+            if (dis[nx][ny] == -1) {
+                dis[nx][ny] = dis[x][y] + 1;
+                xqueue[queue_size] = nx;
+                yqueue[queue_size] = ny;
+                queue_size++;
+            }
         }
     }
 }
@@ -57,7 +59,60 @@ int manhattanDistance(int x1, int y1, int x2, int y2) {
     return abs(x1 - x2) + abs(y1 - y2);
 }
 
+Direction getNearestDirection(const Map *map, Ghost *ghost, int distance[MAP_MAX_SIZE][MAP_MAX_SIZE]) {
+    Direction result = DIR_NONE;
+    int minimum_distance = INT_MAX;
+    for (int dir = 1; dir <= 4; dir++) {
+        int x = (int) getNewX(map, ghost->x, (Direction) dir);
+        int y = (int) getNewY(map, ghost->y, (Direction) dir);
+        if (distance[x][y] < minimum_distance && distance[x][y] != -1) {
+            result = (Direction) dir;
+            minimum_distance = distance[x][y];
+        }
+    }
+    return result;
+}
+
 Direction decideGhost(const Map *map, Ghost *ghost, Pacman *pacman, Ghost *blinky) {
+    //return DIR_NONE;
+    int distance[MAP_MAX_SIZE][MAP_MAX_SIZE];
+    Direction result = DIR_NONE;
+    switch (ghost->type) {
+        case BLINKY:
+            bfs(map, (int) pacman->x, (int) pacman->y, distance);
+            break;
+        case PINKY:;
+            int current_x = (int) pacman->x;
+            int current_y = (int) pacman->y;
+            for (int i = 0; i < 4; i++) {
+                int new_x = (int) getNewX(map, current_x, pacman->dir),
+                        new_y = (int) getNewY(map, current_y, pacman->dir);
+                if (map->cells[new_x][new_y] == CELL_BLOCK)
+                    break;
+                current_x = new_x;
+                current_y = new_y;
+            }
+            bfs(map, current_x, current_y, distance);
+            break;
+        case INKY:;
+            int xPacmanNext = (int) pacman->x,
+                    yPacmanNext = (int) pacman->y;
+            xPacmanNext = (int) getNewX(map, getNewX(map, xPacmanNext, pacman->dir), pacman->dir);
+            yPacmanNext = (int) getNewY(map, getNewY(map, yPacmanNext, pacman->dir), pacman->dir);
+            int symBlinkyX = (int) (2 * xPacmanNext - blinky->x);
+            int symBlinkyY = (int) (2 * yPacmanNext - blinky->y);
+            bfs(map, symBlinkyX, symBlinkyY, distance);
+            break;
+        case CLYDE:
+            if (manhattanDistance(ghost->x, ghost->y, pacman->x, pacman->y) <= 8)
+                bfs(map, 0, 0, distance);
+            else
+                bfs(map, (int) pacman->x, (int) pacman->y, distance);
+            break;
+        default:
+            break;
+    }
+    return getNearestDirection(map, ghost, distance);
 }
 
 Direction decidePacman(const Map *map, Pacman *pacman, Action action) {

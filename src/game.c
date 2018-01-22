@@ -1,12 +1,13 @@
 #include "game.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include "physics.h"
 
 void get_ghost(FILE *input, Ghost *ghost) {
     int tmp1, tmp2;
     fscanf(input, "%*s %d %d ", &tmp1, &tmp2);
     ghost->dir = (Direction) tmp1;
-    ghost->blue = (bool) !tmp2;
+    ghost->blue = !(bool) tmp2;
     if (ghost->blue)
         fscanf(input, "%d ", &tmp1);
     ghost->blueCounterDown = (unsigned long long int) tmp1;
@@ -49,6 +50,7 @@ void initiateGame(char *filename, Map *outMap, Game *outGame, Pacman *outPacman,
     printf("%d %d %d %d\n", outPacman->startX, outPacman->startY, (int) outPacman->x, (int) outPacman->y);
     outPacman->dir = (Direction) tmp;
 
+    //outGhosts = (Ghost *) malloc(4 * sizeof(Ghost));
     for (int i = 0; i < 4; i++)
         get_ghost(input, outGhosts + i);
     outGhosts[0].type = BLINKY;
