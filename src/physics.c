@@ -21,17 +21,43 @@ double getNewY(const Map *map, double pos, Direction dir) {
         return pos - 1 >= 0 ? pos - 1 : pos - 1 + h;
 }
 
-Direction decideGhost(const Map *map, Ghost *ghost, Pacman *pacman, Ghost *blinky) {
-    int sz = 1;
-    Direction allowedDirs[5];
-    allowedDirs[0] = DIR_NONE;
-    for (int dir = DIR_UP; dir <= DIR_LEFT; dir++) {
-        int newX = (int) getNewX(map, ghost->x, (Direction) dir);
-        int newY = (int) getNewY(map, ghost->y, (Direction) dir);
-        if (map->cells[newX][newY] != CELL_BLOCK)
-            allowedDirs[sz++] = (Direction) dir;
+void bfs(Map *map, int init_x, int init_y, int **dis) {
+    for (int i = 0; i < map->height; i++)
+        for (int j = 0; j < map->width; j++)
+            dis[j][i] = -1;
+
+    int xqueue[map->width * map->height],
+            yqueue[map->width * map->height],
+            queue_size = 0;
+
+    dis[init_x][init_y] = 0;
+    xqueue[queue_size] = init_x;
+    yqueue[queue_size] = init_y;
+    queue_size++;
+
+    for (int i = 0; i < queue_size; i++) {
+        int x = xqueue[i],
+                y = yqueue[i];
+        int nx, ny;
+        for (int dir = 1; dir <= 4; dir++) {
+            nx = (int) getNewX(map, x, (Direction) dir);
+            ny = (int) getNewY(map, y, (Direction) dir);
+            if (dis[nx][ny] == -1)
+                dis[nx][ny] = dis[x][y] + 1;
+            if (map->cells[nx][ny] == CELL_BLOCK)
+                continue;
+            xqueue[queue_size] = nx;
+            yqueue[queue_size] = ny;
+            queue_size++;
+        }
     }
-    return allowedDirs[rand() % sz];
+}
+
+int manhattanDistance(int x1, int y1, int x2, int y2) {
+    return abs(x1 - x2) + abs(y1 - y2);
+}
+
+Direction decideGhost(const Map *map, Ghost *ghost, Pacman *pacman, Ghost *blinky) {
 }
 
 Direction decidePacman(const Map *map, Pacman *pacman, Action action) {
