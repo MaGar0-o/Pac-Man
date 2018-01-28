@@ -1,4 +1,5 @@
 #include "physics.h"
+#include "map.h"
 #include <stdlib.h>
 #include <zconf.h>
 
@@ -65,7 +66,7 @@ Direction getNearestDirection(const Map *map, Ghost *ghost, int distance[MAP_MAX
     for (int dir = 1; dir <= 4; dir++) {
         int x = (int) getNewX(map, ghost->x, (Direction) dir);
         int y = (int) getNewY(map, ghost->y, (Direction) dir);
-        if (distance[x][y] < minimum_distance && distance[x][y] != -1) {
+        if (distance[x][y] < minimum_distance && distance[x][y] != -1 && map->cells[x][y] != CELL_BLOCK) {
             result = (Direction) dir;
             minimum_distance = distance[x][y];
         }
@@ -99,8 +100,8 @@ Direction decideGhost(const Map *map, Ghost *ghost, Pacman *pacman, Ghost *blink
                     yPacmanNext = (int) pacman->y;
             xPacmanNext = (int) getNewX(map, getNewX(map, xPacmanNext, pacman->dir), pacman->dir);
             yPacmanNext = (int) getNewY(map, getNewY(map, yPacmanNext, pacman->dir), pacman->dir);
-            int symBlinkyX = (int) (2 * xPacmanNext - blinky->x);
-            int symBlinkyY = (int) (2 * yPacmanNext - blinky->y);
+            int symBlinkyX = ((int) (2 * xPacmanNext - blinky->x) + 10 * map->width) % map->width;
+            int symBlinkyY = ((int) (2 * yPacmanNext - blinky->y) + 10 * map->height) % map->height;
             bfs(map, symBlinkyX, symBlinkyY, distance);
             break;
         case CLYDE:
