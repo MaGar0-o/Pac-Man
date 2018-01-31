@@ -1,6 +1,8 @@
 #ifndef __INPUT_H
 #define __INPUT_H
 
+#include "SDL2_gfxPrimitives.h"
+
 #define MOVE_ACTION_MASK 0b001110
 
 typedef enum {
