@@ -1,10 +1,8 @@
 #include "SDL2_gfxPrimitives.h"
 #include "input.h"
 
-Action convert_sdl_to_action(SDL_Event e) {
-    if (e.type != SDL_KEYDOWN)
-        return ACTION_NONE;
-    switch (e.key.keysym.sym) {
+Action convert_sdl_to_action(SDL_Keycode e) {
+    switch (e) {
         case SDLK_UP:
             return ACTION_UP;
         case SDLK_DOWN:

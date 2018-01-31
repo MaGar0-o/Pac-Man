@@ -13,11 +13,12 @@ typedef enum {
     ACTION_NONE = 0b000000,
 
     // you have nothing to do with other actions, simply ignore them.
+
     ACTION_PAUSE = 0b010000,
     ACTION_IDLE = 0b000001,
     ACTION_EXIT = 0b100000
 } Action;
 
-Action convert_sdl_to_action(SDL_Event e);
+Action convert_sdl_to_action(SDL_Keycode e);
 
 #endif
