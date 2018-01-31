@@ -9,6 +9,14 @@
 #define EPS 1e-2
 #define CELL_SIZE 50
 #define PACMAN_RADIUS 24
+#define PACMAN_COLOR 0xFF42F4F1
+#define CHEESE_RADIUS 3
+#define CHEESE_COLOR 0xFFAAAAFF
+#define PINEAPPLE_RADIUS 8
+#define PINEAPPLE_COLOR 0xFFAAAAFF
+#define CHERRY_RADIUS 8
+#define CHERRY_DIST 5
+#define CHERRY_COLOR 0xFF0000FF
 
 bool isInt(double *d) {
     if (*d - floor(*d) <= EPS) {
@@ -42,6 +50,13 @@ double moveY(const Map *map, double pos, Direction dir, double len) {
         return pos - len >= 0 ? pos - len : pos - len + h;
 }
 
+int get_corner(int pos) {
+    return pos * CELL_SIZE;
+}
+
+int get_center(int pos) {
+    return (pos * 2 + 1) * CELL_SIZE / 2;
+}
 
 int main() {
     Map map;
@@ -119,11 +134,26 @@ int main() {
         SDL_RenderClear(renderer);
         for (int i = 0; i < map.width; i++)
             for (int j = 0; j < map.height; j++)
-                if (map.cells[i][j] == CELL_BLOCK)
-                    rectangleColor(renderer, i * CELL_SIZE, j * CELL_SIZE, (i + 1) * CELL_SIZE, (j + 1) * CELL_SIZE,
-                                   0xFFFF0000);
+                switch (map.cells[i][j]) {
+                    case CELL_BLOCK:
+                        rectangleColor(renderer, get_corner(i), get_corner(j), get_corner(i + 1), get_corner(j + 1),
+                                       0xFFFF0000);
+                        break;
+                    case CELL_CHEESE:
+                        filledCircleColor(renderer, get_center(i), get_center(j), CHEESE_RADIUS, CHEESE_COLOR);
+                        break;
+                    case CELL_PINEAPPLE:
+                        filledCircleColor(renderer, get_center(i), get_center(j), PINEAPPLE_RADIUS, PINEAPPLE_COLOR);
+                        break;
+                    case CELL_CHERRY:
+                        filledCircleColor(renderer, get_center(i) - CHERRY_DIST, get_center(j), CHERRY_RADIUS,
+                                          CHERRY_COLOR);
+                        filledCircleColor(renderer, get_center(i) + CHERRY_DIST, get_center(j), CHERRY_RADIUS,
+                                          CHERRY_COLOR);
+                        break;
+                }
         filledPieColor(renderer, (int) ((pacman.x * 2 + 1) * CELL_SIZE / 2), (int) ((pacman.y * 2 + 1) * CELL_SIZE / 2),
-                       PACMAN_RADIUS, 45, -45, 0xFF00FF00);
+                       PACMAN_RADIUS, 45, -45, PACMAN_COLOR);
         for (int i = 0; i < 4; i++)
             filledCircleColor(renderer, (int) ((ghosts[i].x * 2 + 1) * CELL_SIZE / 2),
                               (int) ((ghosts[i].y * 2 + 1) * CELL_SIZE / 2),
