@@ -1,6 +1,5 @@
 #include "game.h"
 #include <stdio.h>
-#include <stdlib.h>
 #include "physics.h"
 
 void get_ghost(FILE *input, Ghost *ghost) {
