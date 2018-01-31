@@ -8,6 +8,9 @@
 #define GHOST_DEFAULT_SPEED 2.
 #define SIZE 10000
 
+double getNewX(const Map *map, double pos, Direction dir);
+double getNewY(const Map *map, double pos, Direction dir);
+
 // TO WRITE
 Direction decidePacman(const Map *map, Pacman *pacman, Action action);
 
