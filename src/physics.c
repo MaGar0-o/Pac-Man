@@ -8,7 +8,7 @@ double getNewX(const Map *map, double pos, Direction dir) {
     if (dir == DIR_NONE || dir == DIR_UP || dir == DIR_DOWN)
         return pos;
     if (dir == DIR_RIGHT)
-        return pos + 1 < w ? pos + 1 : pos + 1 - w;
+        return pos + 1 <= w - 1 ? pos + 1 : pos + 1 - w;
     if (dir == DIR_LEFT)
         return pos - 1 >= 0 ? pos - 1 : pos - 1 + w;
 }
@@ -18,7 +18,7 @@ double getNewY(const Map *map, double pos, Direction dir) {
     if (dir == DIR_NONE || dir == DIR_LEFT || dir == DIR_RIGHT)
         return pos;
     if (dir == DIR_DOWN)
-        return pos + 1 < h ? pos + 1 : pos + 1 - h;
+        return pos + 1 <= h - 1 ? pos + 1 : pos + 1 - h;
     if (dir == DIR_UP)
         return pos - 1 >= 0 ? pos - 1 : pos - 1 + h;
 }
