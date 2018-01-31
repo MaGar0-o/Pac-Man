@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.7.2)
 project(96109855)
 
 set(CMAKE_C_STANDARD 99)
-set(SOURCE src/main.c src/physics.c src/game.c)
+set(SOURCE src/main.c src/physics.c src/game.c src/input.c)
 add_executable(96109855 ${SOURCE})
 include_directories(src)
 include_directories(/usr/include/SDL2)
