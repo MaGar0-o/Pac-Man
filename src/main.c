@@ -6,7 +6,7 @@
 #include "game.h"
 #include "physics.h"
 
-#define EPS 1e-3
+#define EPS 1e-2
 #define CELL_SIZE 50
 #define PACMAN_RADIUS 24
 
@@ -27,7 +27,7 @@ double moveX(const Map *map, double pos, Direction dir, double len) {
     if (dir == DIR_NONE || dir == DIR_UP || dir == DIR_DOWN)
         return pos;
     if (dir == DIR_RIGHT)
-        return pos + len < w ? pos + len : pos + len - w;
+        return pos + len <= w - 1 ? pos + len : pos + len - w;
     if (dir == DIR_LEFT)
         return pos - len >= 0 ? pos - len : pos - len + w;
 }
@@ -37,7 +37,7 @@ double moveY(const Map *map, double pos, Direction dir, double len) {
     if (dir == DIR_NONE || dir == DIR_LEFT || dir == DIR_RIGHT)
         return pos;
     if (dir == DIR_DOWN)
-        return pos + len < h ? pos + len : pos + len - h;
+        return pos + len <= h - 1 ? pos + len : pos + len - h;
     if (dir == DIR_UP)
         return pos - len >= 0 ? pos - len : pos - len + h;
 }
@@ -49,7 +49,6 @@ int main() {
     Pacman pacman;
     Ghost ghosts[MAX_GHOST_COUNT];
     initiateGame("res/map.txt", &map, &game, &pacman, ghosts);
-
     if (SDL_Init(SDL_INIT_VIDEO)) {
         printf("SDL_Init Error: %s", SDL_GetError());
         return 1;
@@ -72,9 +71,18 @@ int main() {
     }
 
     SDL_Event e;
+    SDL_Keycode last_key = SDLK_n;
 
     int quit = 0;
     for (int cycle = 0; !quit; cycle++) {
+
+        if (SDL_PollEvent(&e)) {
+            if (e.type == SDL_QUIT || (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_q)) {
+                quit = 1;
+                continue;
+            } else if (e.type == SDL_KEYDOWN)
+                last_key = e.key.keysym.sym;
+        }
 
         checkEatables(&map, &game, &pacman, ghosts);
         for (int i = 0; i < 4; i++)
@@ -87,12 +95,14 @@ int main() {
         }
 
 
-        if (SDL_PollEvent(&e))
-            if (e.type == SDL_QUIT) {
-                quit = 1;
-                continue;
-            } else if (e.type == SDL_KEYDOWN && isInt(&pacman.x) && isInt(&pacman.y))
-                pacman.dir = decidePacman(&map, &pacman, convert_sdl_to_action(e));
+        if (isInt(&pacman.x) && isInt(&pacman.y)) {
+            if (last_key != SDLK_n) {
+                pacman.dir = decidePacman(&map, &pacman, convert_sdl_to_action(last_key));
+                last_key = SDLK_n;
+            }
+            pacman.dir = decidePacman(&map, &pacman, ACTION_NONE);
+        }
+
         pacman.x = moveX(&map, pacman.x, pacman.dir, pacman.speed / CYCLES_PER_SEC);
         pacman.y = moveY(&map, pacman.y, pacman.dir, pacman.speed / CYCLES_PER_SEC);
 
@@ -105,6 +115,19 @@ int main() {
         }
 
         //now we should draw ^__^
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+        SDL_RenderClear(renderer);
+        for (int i = 0; i < map.width; i++)
+            for (int j = 0; j < map.height; j++)
+                if (map.cells[i][j] == CELL_BLOCK)
+                    rectangleColor(renderer, i * CELL_SIZE, j * CELL_SIZE, (i + 1) * CELL_SIZE, (j + 1) * CELL_SIZE,
+                                   0xFFFF0000);
+        filledPieColor(renderer, (int) ((pacman.x * 2 + 1) * CELL_SIZE / 2), (int) ((pacman.y * 2 + 1) * CELL_SIZE / 2),
+                       PACMAN_RADIUS, 45, -45, 0xFF00FF00);
+        for (int i = 0; i < 4; i++)
+            filledCircleColor(renderer, (int) ((ghosts[i].x * 2 + 1) * CELL_SIZE / 2),
+                              (int) ((ghosts[i].y * 2 + 1) * CELL_SIZE / 2),
+                              PACMAN_RADIUS, 0xFF0000FF);
 
         SDL_RenderPresent(renderer);
         SDL_Delay(1000 / CYCLES_PER_SEC);
