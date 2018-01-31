@@ -127,7 +127,7 @@ void checkGhostCollision(Pacman *outPacman, Ghost *outGhost) {
 }
 
 bool isGameFinished(Game *game, Pacman *pacman) {
-    return pacman->health == 0 || (game->cheeses + game->pineapples == 0);
+    return pacman->health <= 0 || (game->cheeses + game->pineapples == 0);
 }
 
 void checkGhostState(Ghost *ghost) {
