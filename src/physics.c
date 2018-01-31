@@ -124,7 +124,7 @@ Direction decidePacman(const Map *map, Pacman *pacman, Action action) {
         int newY = (int) getNewY(map, pacman->y, (Direction) newDir);
         thisWayIsBlock = (map->cells[newX][newY] == CELL_BLOCK);
     }
-    if (action & MOVE_ACTION_MASK == 0)
+    if ((action & MOVE_ACTION_MASK) == 0)
         return thisWayIsBlock ? DIR_NONE : pacman->dir;
 
     Direction newDir;
