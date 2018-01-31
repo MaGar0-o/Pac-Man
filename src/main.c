@@ -7,6 +7,8 @@
 #include "physics.h"
 
 #define EPS 1e-3
+#define CELL_SIZE 50
+#define PACMAN_RADIUS 24
 
 bool isInt(double *d) {
     if (*d - floor(*d) <= EPS) {
@@ -48,6 +50,27 @@ int main() {
     Ghost ghosts[MAX_GHOST_COUNT];
     initiateGame("res/map.txt", &map, &game, &pacman, ghosts);
 
+    if (SDL_Init(SDL_INIT_VIDEO)) {
+        printf("SDL_Init Error: %s", SDL_GetError());
+        return 1;
+    }
+
+    SDL_Window *window = SDL_CreateWindow("SDL2_gfx test", 100, 100, map.width * CELL_SIZE, map.height * CELL_SIZE,
+                                          SDL_WINDOW_OPENGL);
+    if (window == NULL) {
+        printf("SDL_CreateWindow Error: %s", SDL_GetError());
+        SDL_Quit();
+        return 2;
+    }
+
+    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    if (renderer == NULL) {
+        SDL_DestroyWindow(window);
+        printf("SDL_CreateRenderer Error: %s", SDL_GetError());
+        SDL_Quit();
+        return 3;
+    }
+
     SDL_Event e;
 
     int quit = 0;
@@ -80,7 +103,16 @@ int main() {
             ghosts[i].x = moveX(&map, ghosts[i].x, ghosts[i].dir, ghosts[i].speed / CYCLES_PER_SEC);
             ghosts[i].y = moveY(&map, ghosts[i].y, ghosts[i].dir, ghosts[i].speed / CYCLES_PER_SEC);
         }
+
+        //now we should draw ^__^
+
+        SDL_RenderPresent(renderer);
+        SDL_Delay(1000 / CYCLES_PER_SEC);
     }
+
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
 
     return 0;
 }
