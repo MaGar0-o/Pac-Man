@@ -17,6 +17,13 @@
 #define CHERRY_RADIUS 8
 #define CHERRY_DIST 5
 #define CHERRY_COLOR 0xFF0000FF
+#define GHOST_RADIUS (PACMAN_RADIUS + 2)
+#define GHOST_FOOT_RADIUS 8
+#define GHOST_FEET_DIST 11
+#define GHOST_EYE_RADIUS 7
+#define GHOST_EYE_DIST 10
+#define GHOST_EYE_UP_DIST 15
+#define WALL_COLOR 0xFFFF0000
 
 bool isInt(double *d) {
     if (*d - floor(*d) <= EPS) {
@@ -124,11 +131,49 @@ unsigned int get_ghost_color(GhostType t, bool isBlue) {
 }
 
 void draw_ghost(SDL_Renderer *renderer, double x, double y, unsigned int color) {
+    //up body
+    filledPieColor(renderer,
+                   get_center(x),
+                   get_center(y),
+                   GHOST_RADIUS,
+                   180, 0,
+                   color);
+    //down body
+    boxColor(renderer,
+             get_corner(x), get_center(y),
+             get_corner(x + 1), get_corner(y + 1),
+             color);
+    //empty space between legs
+    filledPieColor(renderer,
+                   get_center(x) - GHOST_FEET_DIST, get_corner(y + 1),
+                   GHOST_FOOT_RADIUS,
+                   180, 360,
+                   0xFF000000);
+    filledPieColor(renderer,
+                   get_center(x) + GHOST_FEET_DIST, get_corner(y + 1),
+                   GHOST_FOOT_RADIUS,
+                   180, 360,
+                   0xFF000000);
+    //white left eye
     filledCircleColor(renderer,
-                      get_center(x),
-                      get_center(y),
-                      PACMAN_RADIUS,
-                      color);
+                      get_center(x) - GHOST_EYE_DIST, get_corner(y) + GHOST_EYE_UP_DIST,
+                      GHOST_EYE_RADIUS,
+                      0xFFFFFFFF);
+    //black left eye
+    filledCircleColor(renderer,
+                      get_center(x) - GHOST_EYE_DIST + GHOST_EYE_RADIUS / 2, get_corner(y) + GHOST_EYE_UP_DIST,
+                      GHOST_EYE_RADIUS / 2,
+                      0xFF000000);
+    //white right eye
+    filledCircleColor(renderer,
+                      get_center(x) + GHOST_EYE_DIST, get_corner(y) + GHOST_EYE_UP_DIST,
+                      GHOST_EYE_RADIUS,
+                      0xFFFFFFFF);
+    //black right eye
+    filledCircleColor(renderer,
+                      get_center(x) + GHOST_EYE_DIST - GHOST_EYE_RADIUS / 2, get_corner(y) + GHOST_EYE_UP_DIST,
+                      GHOST_EYE_RADIUS / 2,
+                      0xFF000000);
 }
 
 int main() {
@@ -227,7 +272,7 @@ int main() {
                 switch (map.cells[i][j]) {
                     case CELL_BLOCK:
                         rectangleColor(renderer, get_corner(i), get_corner(j), get_corner(i + 1), get_corner(j + 1),
-                                       0xFFFF0000);
+                                       WALL_COLOR);
                         break;
                     case CELL_CHEESE:
                         filledCircleColor(renderer, get_center(i), get_center(j), CHEESE_RADIUS, CHEESE_COLOR);
