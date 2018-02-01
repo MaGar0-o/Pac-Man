@@ -55,7 +55,7 @@ int get_corner(double pos) {
 }
 
 int get_center(double pos) {
-    return (int) ((pos * 2 + 1) * CELL_SIZE / 2);
+    return get_corner(pos) + CELL_SIZE / 2;
 }
 
 int get_left_pacman_angle(Direction dir, int cycle) {
@@ -104,6 +104,31 @@ int get_right_pacman_angle(Direction dir, int cycle) {
                 return -cycle;
             return cycle - 90;
     }
+}
+
+unsigned int get_ghost_color(GhostType t, bool isBlue) {
+    if (isBlue)
+        return 0xFFFF0000;
+    switch (t) {
+        case BLINKY:
+            return 0xFF5555FF;
+        case PINKY:
+            return 0xFFFFBBFF;
+        case INKY:
+            return 0xFFFFFF77;
+        case CLYDE:
+            return 0xFF66AAFF;
+        default:
+            return 0xFFFFFFFF;
+    }
+}
+
+void draw_ghost(SDL_Renderer *renderer, double x, double y, unsigned int color) {
+    filledCircleColor(renderer,
+                      get_center(x),
+                      get_center(y),
+                      PACMAN_RADIUS,
+                      color);
 }
 
 int main() {
@@ -207,10 +232,9 @@ int main() {
                        get_left_pacman_angle(pacman.dir, cycle),
                        get_right_pacman_angle(pacman.dir, cycle),
                        PACMAN_COLOR);
+
         for (int i = 0; i < 4; i++)
-            filledCircleColor(renderer, (int) ((ghosts[i].x * 2 + 1) * CELL_SIZE / 2),
-                              (int) ((ghosts[i].y * 2 + 1) * CELL_SIZE / 2),
-                              PACMAN_RADIUS, 0xFF0000FF);
+            draw_ghost(renderer, ghosts[i].x, ghosts[i].y, get_ghost_color(ghosts[i].type, ghosts[i].blue));
 
         SDL_RenderPresent(renderer);
         SDL_Delay(1000 / CYCLES_PER_SEC);
