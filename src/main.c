@@ -268,12 +268,18 @@ int main() {
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
         SDL_RenderClear(renderer);
         for (int i = 0; i < map.width; i++)
-            for (int j = 0; j < map.height; j++)
+            for (int j = 0; j < map.height; j++) {
+                if (i - 1 >= 0 && (map.cells[i][j] == CELL_BLOCK ^ map.cells[i - 1][j] == CELL_BLOCK))
+                    lineColor(renderer,
+                              get_corner(i), get_corner(j),
+                              get_corner(i), get_corner(j + 1),
+                              WALL_COLOR);
+                if (j - 1 >= 0 && (map.cells[i][j] == CELL_BLOCK ^ map.cells[i][j - 1] == CELL_BLOCK))
+                    lineColor(renderer,
+                              get_corner(i), get_corner(j),
+                              get_corner(i + 1), get_corner(j),
+                              WALL_COLOR);
                 switch (map.cells[i][j]) {
-                    case CELL_BLOCK:
-                        rectangleColor(renderer, get_corner(i), get_corner(j), get_corner(i + 1), get_corner(j + 1),
-                                       WALL_COLOR);
-                        break;
                     case CELL_CHEESE:
                         filledCircleColor(renderer, get_center(i), get_center(j), CHEESE_RADIUS, CHEESE_COLOR);
                         break;
@@ -287,6 +293,7 @@ int main() {
                                           CHERRY_COLOR);
                         break;
                 }
+            }
         filledPieColor(renderer,
                        get_center(pacman.x),
                        get_center(pacman.y),
