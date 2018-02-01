@@ -16,7 +16,6 @@ void get_ghost(FILE *input, Ghost *ghost) {
 
 void initiateGame(char *filename, Map *outMap, Game *outGame, Pacman *outPacman, Ghost *outGhosts) {
     FILE *input = fopen(filename, "r");
-    printf("%s\n", filename);
     fscanf(input, "%d %d\n", &outMap->height, &outMap->width);
     outGame->cheeses = outGame->cherries = outGame->pineapples = 0;
     outGame->ghosts = 4;
@@ -46,10 +45,8 @@ void initiateGame(char *filename, Map *outMap, Game *outGame, Pacman *outPacman,
     fscanf(input, "pacman: %lf %d (%d,%d) (%lf,%lf)\n", &outPacman->speed, &tmp, &outPacman->startX, &outPacman->startY,
            &outPacman->x, &outPacman->y);
     outPacman->health = 3;
-    printf("%d %d %d %d\n", outPacman->startX, outPacman->startY, (int) outPacman->x, (int) outPacman->y);
     outPacman->dir = (Direction) tmp;
 
-    //outGhosts = (Ghost *) malloc(4 * sizeof(Ghost));
     for (int i = 0; i < 4; i++)
         get_ghost(input, outGhosts + i);
     outGhosts[0].type = BLINKY;
