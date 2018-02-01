@@ -162,14 +162,31 @@ int main() {
     SDL_Keycode last_key = SDLK_n;
 
     int quit = 0;
+    int pause = 0;
     for (int cycle = 0; !quit; cycle++) {
 
         if (SDL_PollEvent(&e)) {
-            if (e.type == SDL_QUIT || (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_q)) {
+            if (e.type == SDL_QUIT) {
                 quit = 1;
                 continue;
-            } else if (e.type == SDL_KEYDOWN)
-                last_key = e.key.keysym.sym;
+            } else if (e.type == SDL_KEYDOWN) {
+                switch (e.key.keysym.sym) {
+                    case SDLK_q:
+                        quit = 1;
+                        break;
+                    case SDLK_p:
+                        pause = !pause;
+                        break;
+                    default:
+                        last_key = e.key.keysym.sym;
+                }
+            }
+        }
+
+        if (pause) {
+            SDL_Delay(1000 / CYCLES_PER_SEC);
+            cycle--;
+            continue;
         }
 
         checkEatables(&map, &game, &pacman, ghosts);
