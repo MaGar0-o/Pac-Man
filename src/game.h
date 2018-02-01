@@ -67,6 +67,9 @@ void checkGhostCollision(Pacman *outPacman, Ghost *outGhost);
 // TO WRITE
 bool isGameFinished(Game *game, Pacman *pacman);
 
+// I WROTE!
+bool pacmanWon(Game *game, Pacman *pacman);
+
 // TO WRITE
 void checkGhostState(Ghost *ghost);
 

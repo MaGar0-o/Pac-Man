@@ -129,6 +129,10 @@ bool isGameFinished(Game *game, Pacman *pacman) {
     return pacman->health <= 0 || (game->cheeses + game->pineapples == 0);
 }
 
+bool pacmanWon(Game *game, Pacman *pacman) {
+    return game->cheeses + game->pineapples == 0;
+}
+
 void checkGhostState(Ghost *ghost) {
     if (!ghost->blue)
         return;

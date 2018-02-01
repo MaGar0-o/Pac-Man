@@ -205,6 +205,34 @@ void showInfo(SDL_Renderer *renderer, Map *map, Game *game, Pacman *pacman) {
                 0xFF000000);
 }
 
+void finalLoseInfo(SDL_Renderer *renderer, Map *map, Game *game) {
+    boxColor(renderer,
+             get_corner(0), get_corner(map->height),
+             get_corner(map->width), get_corner(map->height + 1),
+             0xFF0000FF);
+    char temp[100];
+    sprintf(temp, "GAME OVEEEEER, LOOOOOSER... Final Score: %d (Press Q)", game->score);
+    stringColor(renderer,
+                get_corner(0) + 10, get_center(map->height),
+                temp,
+                0xFFFFFFFF);
+}
+
+void finalWinInfo(SDL_Renderer *renderer, Map *map, Game *game) {
+    boxColor(renderer,
+             get_corner(0), get_corner(map->height),
+             get_corner(map->width), get_corner(map->height + 1),
+             0xFF00FF00);
+    char temp[100];
+    sprintf(temp, "YOUUUU WOOOON, NIGGA... Final Score: %d (Press Q)", game->score);
+    stringColor(renderer,
+                get_corner(0) + 10, get_center(map->height),
+                temp,
+                0xFF000000);
+}
+
+
+
 int main() {
     Map map;
     Game game;
@@ -238,6 +266,7 @@ int main() {
 
     int quit = 0;
     int pause = 0;
+    int gameFinished = 0;
     for (int cycle = 0; !quit; cycle++) {
 
         if (SDL_PollEvent(&e)) {
@@ -258,7 +287,7 @@ int main() {
             }
         }
 
-        if (pause) {
+        if (pause || gameFinished) {
             SDL_Delay(1000 / CYCLES_PER_SEC);
             cycle--;
             continue;
@@ -270,7 +299,12 @@ int main() {
         for (int i = 0; i < 4; i++)
             checkGhostCollision(&pacman, ghosts + i);
         if (isGameFinished(&game, &pacman)) {
-            quit = 1;
+            if (pacmanWon(&game, &pacman))
+                finalWinInfo(renderer, &map, &game);
+            else
+                finalLoseInfo(renderer, &map, &game);
+            SDL_RenderPresent(renderer);
+            gameFinished = 1;
             continue;
         }
 
