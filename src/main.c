@@ -50,12 +50,60 @@ double moveY(const Map *map, double pos, Direction dir, double len) {
         return pos - len >= 0 ? pos - len : pos - len + h;
 }
 
-int get_corner(int pos) {
-    return pos * CELL_SIZE;
+int get_corner(double pos) {
+    return (int) (pos * CELL_SIZE);
 }
 
-int get_center(int pos) {
-    return (pos * 2 + 1) * CELL_SIZE / 2;
+int get_center(double pos) {
+    return (int) ((pos * 2 + 1) * CELL_SIZE / 2);
+}
+
+int get_left_pacman_angle(Direction dir, int cycle) {
+    cycle %= 90;
+    static Direction previous_dir = DIR_LEFT;
+    if (dir == DIR_NONE)
+        dir = previous_dir;
+    previous_dir = dir;
+    switch (dir) {
+        case DIR_RIGHT:
+            if (cycle < 45)
+                return cycle;
+            return 90 - cycle;
+        case DIR_LEFT:
+            return cycle < 45 ? 180 + cycle : 270 - cycle;
+        case DIR_DOWN:
+            return cycle < 45 ? 90 + cycle : 180 - cycle;
+        case DIR_UP:
+            return cycle < 45 ? 270 + cycle : -cycle;
+        default:
+            if (cycle < 45)
+                return cycle;
+            return 90 - cycle;
+    }
+}
+
+int get_right_pacman_angle(Direction dir, int cycle) {
+    cycle %= 90;
+    static Direction previous_dir = DIR_LEFT;
+    if (dir == DIR_NONE)
+        dir = previous_dir;
+    previous_dir = dir;
+    switch (dir) {
+        case DIR_RIGHT:
+            if (cycle < 45)
+                return -cycle;
+            return cycle - 90;
+        case DIR_LEFT:
+            return cycle < 45 ? 180 - cycle : 90 + cycle;
+        case DIR_DOWN:
+            return cycle < 45 ? 90 - cycle : cycle;
+        case DIR_UP:
+            return cycle < 45 ? 270 - cycle : 180 + cycle;
+        default:
+            if (cycle < 45)
+                return -cycle;
+            return cycle - 90;
+    }
 }
 
 int main() {
@@ -152,8 +200,13 @@ int main() {
                                           CHERRY_COLOR);
                         break;
                 }
-        filledPieColor(renderer, (int) ((pacman.x * 2 + 1) * CELL_SIZE / 2), (int) ((pacman.y * 2 + 1) * CELL_SIZE / 2),
-                       PACMAN_RADIUS, 45, -45, PACMAN_COLOR);
+        filledPieColor(renderer,
+                       get_center(pacman.x),
+                       get_center(pacman.y),
+                       PACMAN_RADIUS,
+                       get_left_pacman_angle(pacman.dir, cycle),
+                       get_right_pacman_angle(pacman.dir, cycle),
+                       PACMAN_COLOR);
         for (int i = 0; i < 4; i++)
             filledCircleColor(renderer, (int) ((ghosts[i].x * 2 + 1) * CELL_SIZE / 2),
                               (int) ((ghosts[i].y * 2 + 1) * CELL_SIZE / 2),
