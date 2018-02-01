@@ -24,6 +24,7 @@
 #define GHOST_EYE_DIST 10
 #define GHOST_EYE_UP_DIST 15
 #define WALL_COLOR 0xFFFF0000
+#define LINE_SPACE 10
 
 bool isInt(double *d) {
     if (*d - floor(*d) <= EPS) {
@@ -176,6 +177,34 @@ void draw_ghost(SDL_Renderer *renderer, double x, double y, unsigned int color) 
                       0xFF000000);
 }
 
+void showInfo(SDL_Renderer *renderer, Map *map, Game *game, Pacman *pacman) {
+    boxColor(renderer,
+             get_corner(0), get_corner(map->height),
+             get_corner(map->width), get_corner(map->height + 1),
+             0xFFFFFFFF);
+    char temp[100];
+    sprintf(temp, "HEALTH: %d", pacman->health);
+    stringColor(renderer,
+                get_corner(0) + 10, get_center(map->height) - LINE_SPACE,
+                temp,
+                0xFF000000);
+    sprintf(temp, "SCORE: %d", game->score);
+    stringColor(renderer,
+                get_corner(0) + 10, get_center(map->height) + LINE_SPACE,
+                temp,
+                0xFF000000);
+    sprintf(temp, "Q -> QUIT");
+    stringColor(renderer,
+                get_corner(map->width) / 2, get_center(map->height) - LINE_SPACE,
+                temp,
+                0xFF000000);
+    sprintf(temp, "P -> PAUSE/PLAY");
+    stringColor(renderer,
+                get_corner(map->width) / 2, get_center(map->height) + LINE_SPACE,
+                temp,
+                0xFF000000);
+}
+
 int main() {
     Map map;
     Game game;
@@ -187,7 +216,8 @@ int main() {
         return 1;
     }
 
-    SDL_Window *window = SDL_CreateWindow("SDL2_gfx test", 100, 100, map.width * CELL_SIZE, map.height * CELL_SIZE,
+    SDL_Window *window = SDL_CreateWindow("SDL2_gfx test", 100, 100, map.width * CELL_SIZE,
+                                          (map.height + 1) * CELL_SIZE,
                                           SDL_WINDOW_OPENGL);
     if (window == NULL) {
         printf("SDL_CreateWindow Error: %s", SDL_GetError());
@@ -304,6 +334,8 @@ int main() {
 
         for (int i = 0; i < 4; i++)
             draw_ghost(renderer, ghosts[i].x, ghosts[i].y, get_ghost_color(ghosts[i].type, ghosts[i].blue));
+
+        showInfo(renderer, &map, &game, &pacman);
 
         SDL_RenderPresent(renderer);
         SDL_Delay(1000 / CYCLES_PER_SEC);
